@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-This script that converts Markdown to HTML.
+A script that converts Markdown to HTML.
 """
 
 import sys
@@ -9,7 +9,7 @@ import re
 
 def convert_markdown_to_html(input_file, output_file):
     """
-    It converts a Markdown file to HTML and writes the output to a file.
+    Converts a Markdown file to HTML and writes the output to a file.
     """
     # Check that the Markdown file exists and is a file
     if not (os.path.exists(input_file) and os.path.isfile(input_file)):
@@ -48,3 +48,4 @@ if __name__ == "__main__":
 
     # Exit  with a successful status code
     sys.exit(0)
+
