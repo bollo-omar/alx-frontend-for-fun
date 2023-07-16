@@ -16,7 +16,7 @@ def convert_markdown_to_html(input_file, output_file):
         print(f"Missing {input_file}", file=sys.stderr)
         sys.exit(1)
 
-    # Read the Markdown file and convertt it to HTML
+    # Read the Markdown file and convert it to HTML
     with open(input_file, encoding="utf-8") as f:
         html_lines = []
         for line in f:
@@ -43,9 +43,8 @@ if __name__ == "__main__":
     input_file = sys.argv[1]
     output_file = sys.argv[2]
 
-    # Convert the Markdown file to the HTML and write the output to a file
+    # Convert the Markdown file to HTML and write the output to a file
     convert_markdown_to_html(input_file, output_file)
 
-    # Exit  with a successful status code
+    # Exit with a successful status code
     sys.exit(0)
-
