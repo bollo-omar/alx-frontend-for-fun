@@ -48,15 +48,16 @@ def convert_lines_to_html(markdown_lines):
             match = re.match(r"^- (.*)$", line)
             if match:
                 list_item_text = match.group(1)
+                if inside_ordered_list:
+                    html_lines.append("</ol>")
+                    inside_ordered_list = False
+                if inside_paragraph:
+                    html_lines.append("</p>")
+                    inside_paragraph = False
                 if not inside_unordered_list:
-                    if inside_ordered_list:
-                        html_lines.append("</ol>")
-                        inside_ordered_list = False
-                    if inside_paragraph:
-                        html_lines.append("</p>")
-                        inside_paragraph = False
                     html_lines.append("<ul>")
                     inside_unordered_list = True
+                list_item_text = parse_bold_syntax(list_item_text)
                 html_lines.append(f"<li>{list_item_text}</li>")
             elif inside_unordered_list:
                 html_lines.append("</ul>")
@@ -66,15 +67,16 @@ def convert_lines_to_html(markdown_lines):
             match = re.match(r"^\* (.*)$", line)
             if match:
                 list_item_text = match.group(1)
+                if inside_unordered_list:
+                    html_lines.append("</ul>")
+                    inside_unordered_list = False
+                if inside_paragraph:
+                    html_lines.append("</p>")
+                    inside_paragraph = False
                 if not inside_ordered_list:
-                    if inside_unordered_list:
-                        html_lines.append("</ul>")
-                        inside_unordered_list = False
-                    if inside_paragraph:
-                        html_lines.append("</p>")
-                        inside_paragraph = False
                     html_lines.append("<ol>")
                     inside_ordered_list = True
+                list_item_text = parse_bold_syntax(list_item_text)
                 html_lines.append(f"<li>{list_item_text}</li>")
             elif inside_ordered_list:
                 html_lines.append("</ol>")
@@ -85,6 +87,7 @@ def convert_lines_to_html(markdown_lines):
                 if not inside_paragraph:
                     html_lines.append("<p>")
                     inside_paragraph = True
+                line = parse_bold_syntax(line)
                 html_lines.append(line.rstrip())
 
     if inside_unordered_list:
@@ -95,6 +98,13 @@ def convert_lines_to_html(markdown_lines):
         html_lines.append("</p>")
 
     return html_lines
+
+def parse_bold_syntax(text):
+    """
+    Parses bold syntax (**) and replaces it with <b> tags.
+    """
+    text = re.sub(r"\*\*(.*?)\*\*", r"<b>\1</b>", text)
+    return text
 
 if __name__ == "__main__":
     # Check that the correct number of arguments were provided
