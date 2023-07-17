@@ -33,6 +33,7 @@ def convert_lines_to_html(markdown_lines):
     html_lines = []
     inside_unordered_list = False
     inside_ordered_list = False
+    inside_paragraph = False
 
     for line in markdown_lines:
         # Check for Markdown headings
@@ -41,6 +42,7 @@ def convert_lines_to_html(markdown_lines):
             heading_level = len(match.group(1))
             heading_text = match.group(2)
             html_lines.append(f"<h{heading_level}>{heading_text}</h{heading_level}>")
+            inside_paragraph = False
         else:
             # Check for unordered list items
             match = re.match(r"^- (.*)$", line)
@@ -50,6 +52,9 @@ def convert_lines_to_html(markdown_lines):
                     if inside_ordered_list:
                         html_lines.append("</ol>")
                         inside_ordered_list = False
+                    if inside_paragraph:
+                        html_lines.append("</p>")
+                        inside_paragraph = False
                     html_lines.append("<ul>")
                     inside_unordered_list = True
                 html_lines.append(f"<li>{list_item_text}</li>")
@@ -65,19 +70,29 @@ def convert_lines_to_html(markdown_lines):
                     if inside_unordered_list:
                         html_lines.append("</ul>")
                         inside_unordered_list = False
+                    if inside_paragraph:
+                        html_lines.append("</p>")
+                        inside_paragraph = False
                     html_lines.append("<ol>")
                     inside_ordered_list = True
                 html_lines.append(f"<li>{list_item_text}</li>")
             elif inside_ordered_list:
                 html_lines.append("</ol>")
                 inside_ordered_list = False
-            else:
+
+            # Check for paragraphs
+            if not inside_unordered_list and not inside_ordered_list and line.strip() != "":
+                if not inside_paragraph:
+                    html_lines.append("<p>")
+                    inside_paragraph = True
                 html_lines.append(line.rstrip())
 
     if inside_unordered_list:
         html_lines.append("</ul>")
     if inside_ordered_list:
         html_lines.append("</ol>")
+    if inside_paragraph:
+        html_lines.append("</p>")
 
     return html_lines
 
@@ -96,3 +111,4 @@ if __name__ == "__main__":
 
     # Exit with a successful status code
     sys.exit(0)
+
